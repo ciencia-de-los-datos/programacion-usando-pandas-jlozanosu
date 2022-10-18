@@ -22,7 +22,7 @@ def pregunta_01():
     40
 
     """
-    return
+    return tbl0.shape[0]
 
 
 def pregunta_02():
@@ -33,7 +33,7 @@ def pregunta_02():
     4
 
     """
-    return
+    return tbl0.shape[1]
 
 
 def pregunta_03():
@@ -50,7 +50,8 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    xx=tbl0.groupby("_c1").count()
+    return xx["_c2"]
 
 
 def pregunta_04():
@@ -65,7 +66,8 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    xx=tbl0.groupby("_c1")["_c2"].mean()
+    return xx
 
 
 def pregunta_05():
@@ -82,7 +84,7 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].max()
 
 
 def pregunta_06():
@@ -94,7 +96,8 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    xx=tbl1.sort_values("_c4")["_c4"].str.upper().unique().tolist()
+    return xx
 
 
 def pregunta_07():
@@ -110,7 +113,7 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].sum()
 
 
 def pregunta_08():
@@ -128,7 +131,9 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    xx=tbl0.assign(suma=tbl0._c0 + tbl0._c2)
+    return xx
+
 
 
 def pregunta_09():
@@ -146,7 +151,11 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    tbl0["year"]=pd.NA
+    for i in range (len(tbl0)):
+        tbl0["year"][i]=tbl0["_c3"][i].split("-")[0]
+        
+    return tbl0
 
 
 def pregunta_10():
@@ -163,7 +172,23 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    
+    xx = sorted(tbl0["_c1"].unique())
+    resultado={}
+    
+    for i in xx:
+        resultado[str(i)]=":".join(map(str, sorted(tbl0[tbl0["_c1"]==i]["_c2"])))
+
+    #Con esto se transforma de diccionario a dataframe
+
+    ddf=pd.DataFrame(
+            {
+                "_c2": resultado.values()
+            },
+            index=pd.Series(resultado.keys(), name="_c1"),
+        )
+    return ddf
+
 
 
 def pregunta_11():
@@ -182,7 +207,18 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    
+    xx = sorted(tbl1["_c0"].unique())
+    resultado={}
+    
+    for i in xx:
+        resultado[str(i)]=",".join(map(str, sorted(tbl1[tbl1["_c0"]==i]["_c4"])))
+
+    
+    df=pd.DataFrame(list(resultado.items()),
+                   columns=['_c0', '_c4'])
+    return df
+
 
 
 def pregunta_12():
@@ -200,8 +236,24 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    
+    xx = sorted(tbl2["_c0"].unique())
+    
+    tbl2["_c5b"]=tbl2["_c5b"].astype(str)
+    
+    tbl22=tbl2.assign(_c5=tbl2._c5a +":" +tbl2._c5b)
+    print(xx)
+    resultado={}
+    
+    for i in xx:
+        resultado[str(i)]=",".join(map(str, sorted(tbl22[tbl22["_c0"]==i]["_c5"])))
 
+    #Con esto se transforma de diccionario a dataframe
+    df=pd.DataFrame(list(resultado.items()),
+                   columns=['_c0', '_c5'])
+                   
+    return df
+    
 
 def pregunta_13():
     """
@@ -217,4 +269,12 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    
+    xx=pd.merge(
+        tbl0,
+        tbl2,
+        on="_c0"
+    )
+    
+    xxx=xx.groupby("_c1")["_c5b"].sum()
+    return xxx
