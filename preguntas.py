@@ -53,6 +53,7 @@ def pregunta_03():
     xx=tbl0.groupby("_c1").count()
     return xx["_c2"]
 
+
 def pregunta_04():
     """
     Calcule el promedio de _c2 por cada letra de la _c1 del archivo `tbl0.tsv`.
@@ -114,6 +115,7 @@ def pregunta_07():
     """
     return tbl0.groupby("_c1")["_c2"].sum()
 
+
 def pregunta_08():
     """
     Agregue una columna llamada `suma` con la suma de _c0 y _c2 al archivo `tbl0.tsv`.
@@ -155,6 +157,7 @@ def pregunta_09():
         
     return tbl0
 
+
 def pregunta_10():
     """
     Construya una tabla que contenga _c1 y una lista separada por ':' de los valores de
@@ -169,11 +172,16 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
+    #tenemos los valores unicos
     xx = sorted(tbl0["_c1"].unique())
     resultado={}
+    #usamos un filtro para cada uno de los datos anteriores y agrupamos en diccionario
+    #La funcion map nos aplica la funcion str a cada elemento del filtro
     for i in xx:
         resultado[str(i)]=":".join(map(str, sorted(tbl0[tbl0["_c1"]==i]["_c2"])))
-        
+
+    #Con esto se transforma de diccionario a dataframe
+
     ddf=pd.DataFrame(
             {
                 "_c2": resultado.values()
@@ -181,6 +189,7 @@ def pregunta_10():
             index=pd.Series(resultado.keys(), name="_c1"),
         )
     return ddf
+
 
 
 def pregunta_11():
@@ -199,13 +208,19 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-     xx = sorted(tbl1["_c0"].unique())
+    #tenemos los valores unicos
+    xx = sorted(tbl1["_c0"].unique())
     resultado={}
+    #usamos un filtro para cada uno de los datos anteriores y agrupamos en diccionario
+    #La funcion map nos aplica la funcion str a cada elemento del filtro
     for i in xx:
         resultado[str(i)]=",".join(map(str, sorted(tbl1[tbl1["_c0"]==i]["_c4"])))
-     df=pd.DataFrame(list(resultado.items()),
+
+    #Con esto se transforma de diccionario a dataframe
+    df=pd.DataFrame(list(resultado.items()),
                    columns=['_c0', '_c4'])
     return df
+
 
 
 def pregunta_12():
@@ -223,17 +238,27 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
+    #tenemos los valores unicos
     xx = sorted(tbl2["_c0"].unique())
+    #Convertimos los int en str
     tbl2["_c5b"]=tbl2["_c5b"].astype(str)
+    #Concadenamos las columnas
     tbl22=tbl2.assign(_c5=tbl2._c5a +":" +tbl2._c5b)
     print(xx)
     resultado={}
+    #usamos un filtro para cada uno de los datos anteriores y agrupamos en diccionario
+    #La funcion map nos aplica la funcion str a cada elemento del filtro
     for i in xx:
         resultado[str(i)]=",".join(map(str, sorted(tbl22[tbl22["_c0"]==i]["_c5"])))
+
+    #Con esto se transforma de diccionario a dataframe
     df=pd.DataFrame(list(resultado.items()),
                    columns=['_c0', '_c5'])
                    
     return df
+    
+
+
 
 def pregunta_13():
     """
@@ -249,10 +274,12 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
+    #se unen las tablas
     xx=pd.merge(
         tbl0,
         tbl2,
         on="_c0"
     )
+    #Se agrupa
     xxx=xx.groupby("_c1")["_c5b"].sum()
     return xxx
